@@ -193,7 +193,8 @@ set(CELT_SOURCES_SSE
 )
 
 set(CELT_SOURCES_SSE2
-  opus/celt/x86/pitch_sse2.c celt/x86/vq_sse2.c
+  opus/celt/x86/pitch_sse2.c 
+  opus/celt/x86/vq_sse2.c
 )
 
 set(CELT_SOURCES_SSE4_1
