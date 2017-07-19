@@ -1,3 +1,2 @@
 # opus-cmake
-With this repo you can easily include the Opus codec into CMake projects. Uses latest opus sources.
-Just clone recursively.
+This is my CMakeLists.txt that I use for my project in conjunction with opus. For now it is only tested in Linux and may need adjustment for other needs.
