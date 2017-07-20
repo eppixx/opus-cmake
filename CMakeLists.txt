@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.1)
 project(opus)
 
+#pull submodule if not already here
+execute_process(COMMAND git submodule update --init -- .
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+
 option(OPUS_USE_ALLOCA "USE_ALLOCA" ON)
 option(OPUS_FIXED_POINT "FIXED_POINT" OFF)
 option(OPUS_DISABLE_FLOAT_API "DISABLE_FLOAT_API" OFF)
