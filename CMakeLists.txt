@@ -94,17 +94,19 @@ set(SILK_SOURCES
 )
 
 set(SILK_SOURCES_SSE4_1
-  opus/silk/x86/NSQ_sse.c
-  opus/silk/x86/NSQ_del_dec_sse.c
+  opus/silk/x86/NSQ_sse4_1.c
+  opus/silk/x86/NSQ_del_dec_sse4_1.c
   opus/silk/x86/x86_silk_map.c
-  opus/silk/x86/VAD_sse.c
-  opus/silk/x86/VQ_WMat_EC_sse.c
+  opus/silk/x86/VAD_sse4_1.c
+  opus/silk/x86/VQ_WMat_EC_sse4_1.c
 )
 
 set(SILK_SOURCES_ARM_NEON_INTR
   opus/silk/arm/arm_silk_map.c
   opus/silk/arm/NSQ_del_dec_neon_intr.c
   opus/silk/arm/NSQ_neon.c
+  opus/silk/arm/LPC_inv_pred_gain_neon_intr.c
+  opus/silk/arm/biquad_alt_neon_intr.c
 )
 
 set(SILK_SOURCES_FIXED
@@ -134,8 +136,12 @@ set(SILK_SOURCES_FIXED
 )
 
 set(SILK_SOURCES_FIXED_SSE4_1
-  opus/silk/fixed/x86/vector_ops_FIX_sse.c
-  opus/silk/fixed/x86/burg_modified_FIX_sse.c
+  opus/silk/fixed/x86/vector_ops_FIX_sse4_1.c
+  opus/silk/fixed/x86/burg_modified_FIX_sse4_1.c
+)
+
+set(SILK_SOURCES_FIXED_ARM
+    opus/silk/fixed/arm/warped_autocorrelation_FIX_neon_intr.c
 )
 
 set(SILK_SOURCES_FLOAT
@@ -202,7 +208,7 @@ set(CELT_SOURCES_SSE2
 )
 
 set(CELT_SOURCES_SSE4_1
-  opus/celt/x86/celt_lpc_sse.c
+  opus/celt/x86/celt_lpc_sse4_1.c
   opus/celt/x86/pitch_sse4_1.c
 )
 
@@ -221,11 +227,12 @@ set(CELT_AM_SOURCES_ARM_ASM
 
 set(CELT_SOURCES_ARM_NEON_INTR
   opus/celt/arm/celt_neon_intr.c
+  opus/celt/arm/pitch_neon_intr.c
 )
 
 set(CELT_SOURCES_ARM_NE10
-  opus/celt/arm/celt_ne10_fft.c
-  opus/celt/arm/celt_ne10_mdct.c
+  opus/celt/arm/celt_fft_ne10.c
+  opus/celt/arm/celt_mdct_ne10.c
 )
 
 set(OPUS_HEADER
@@ -233,6 +240,7 @@ set(OPUS_HEADER
   opus/include/opus_custom.h
   opus/include/opus_defines.h
   opus/include/opus_multistream.h
+  opus/include/opus_projection.h
   opus/include/opus_types.h
 )
 
@@ -243,6 +251,9 @@ set(OPUS_SOURCES
   opus/src/opus_multistream.c
   opus/src/opus_multistream_encoder.c
   opus/src/opus_multistream_decoder.c
+  opus/src/opus_projection_decoder.c
+  opus/src/opus_projection_encoder.c
+  opus/src/mapping_matrix.c
   opus/src/repacketizer.c
 )
 
@@ -269,16 +280,23 @@ if (NOT OPUS_DISABLE_FLOAT_API)
 endif(NOT OPUS_DISABLE_FLOAT_API)
 
 if(HAVE_SSE)
+	add_definitions(-DOPUS_X86_MAY_HAVE_SSE)
 	list(APPEND CELT_SOURCES ${CELT_SOURCES_SSE})
 endif(HAVE_SSE)
 
 if(HAVE_SSE2)
+	add_definitions(-DOPUS_X86_MAY_HAVE_SSE2)
 	list(APPEND CELT_SOURCES ${CELT_SOURCES_SSE2})
 endif(HAVE_SSE2)
 
 if(HAVE_SSE4_1)
+	add_definitions(-DOPUS_X86_MAY_HAVE_SSE4_1)
 	list(APPEND CELT_SOURCES ${CELT_SOURCES_SSE4_1})
 endif(HAVE_SSE4_1)
+
+if(HAVE_AVX)
+	add_definitions(-DOPUS_X86_MAY_HAVE_AVX)
+endif(HAVE_AVX)
 
 if(CPU_ARM)
 	list(APPEND CELT_SOURCES ${CELT_SOURCES_ARM})
@@ -339,4 +357,5 @@ target_include_directories(opus PRIVATE
   opus/silk/fixed
   opus/celt
   opus/src
+  opus/
 )
